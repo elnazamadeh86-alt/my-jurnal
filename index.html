@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>Daily Journal</title>
+</head> 
+
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+body{
+background-color: #f5e6e7; 
+font-family: 'Vazirmatn', sans-serif; }
+  h1 {
+    color: #A66F78;
+    font-size: 36px;
+    margin-bottom: 20px;
+  }
+
+  p {
+    font-size: 18px;
+    line-height: 2;
+  }
+</style>
+    
+
+  </head>
+  </body>
+
+<h1> سلام دوست من </h1>
+    <p>به ژورنال روزانه خوش آمدی.</p>
+   <p>اینجا قراره کمی برای خودمون وقت بزاریم</p> 
+
+</body>
+
+<section class="habit-tracker">
+
+  <h2>عادت‌های کوچک، تغییرهای بزرگ 🌱</h2>
+  <p>هر قدم کوچیکت ارزشمنده.</p>
+
+  <div class="habit-progress">
+    <span>پیشرفت این هفته</span>
+    <strong id="progress-text">۰٪</strong>
+    <div class="progress-bar">
+      <div id="progress-fill"></div>
+    </div>
+  </div>
+
+  <div class="habit-input">
+    <input
+      type="text"
+      id="habit-name"
+      placeholder="اسم عادت جدیدت..."
+    >
+    <button onclick="addHabit()">+ افزودن عادت</button>
+  </div>
+
+  <div class="habit-table">
+    <table>
+      <thead>
+        <tr>
+          <th>عادت‌ها</th>
+          <th>ش</th>
+          <th>ی</th>
+          <th>د</th>
+          <th>س</th>
+          <th>چ</th>
+          <th>پ</th>
+          <th>ج</th>
+          <th>حذف</th>
+        </tr>
+      </thead>
+      <tbody id="habit-list">
+      </tbody>
+    </table>
+  </div>
+
+</section>
+</body>
+<style>
+
+.habit-tracker {
+  background-color: #FFFCF9;
+  max-width: 850px;
+  margin: 50px auto;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 5px 20px #00000010;
+}
+
+.habit-tracker h2 {
+  color: #A66F78;
+  font-size: 25px;
+}
+
+.habit-tracker p {
+  color: #9B8582;
+  font-size: 15px;
+}
+
+.habit-progress {
+  background-color: #F8ECEC;
+  padding: 20px;
+  border-radius: 15px;
+  margin: 25px 0;
+}
+
+.progress-bar {
+  height: 10px;
+  background-color: #E8D5D5;
+  border-radius: 20px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+#progress-fill {
+  width: 0%;
+  height: 100%;
+  background-color: #C58D96;
+  border-radius: 20px;
+}
+
+.habit-input {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.habit-input input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #E8D5D5;
+  border-radius: 10px;
+  font-family: inherit;
+  outline: none;
+}
+
+.habit-input button {
+  background-color: #C58D96;
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.habit-table {
+  overflow-x: auto;
+}
+
+.habit-table table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.habit-table th {
+  color: #A66F78;
+  background-color: #F8ECEC;
+  padding: 13px 8px;
+}
+
+.habit-table td {
+  padding: 14px 8px;
+  border-bottom: 1px solid #F1E5E3;
+}
+
+.habit-table tr:hover {
+  background-color: #FFF7F5;
+}
+
+</style>
+<body>
+   
+<script>
+  let habits = JSON.parse(
+    localStorage.getItem("myHabits") || "[]"
+  );
+
+  const days = ["ش", "ی", "د", "س", "چ", "پ", "ج"];
+
+  function saveHabits() {
+    localStorage.setItem("myHabits", JSON.stringify(habits));
+  }
+
+  function addHabit() {
+    const input = document.getElementById("habit-name");
+    const name = input.value.trim();
+
+    if (name === "") {
+      alert("اول اسم عادتت رو بنویس 🌷");
+      return;
+    }
+
+    habits.push({
+      name: name,
+      completed: [false, false, false, false, false, false, false]
+    });
+
+    input.value = "";
+    saveHabits();
+    renderHabits();
+  }
+
+  function deleteHabit(index) {
+    habits.splice(index, 1);
+    saveHabits();
+    renderHabits();
+  }
+
+  function toggleHabit(habitIndex, dayIndex) {
+    habits[habitIndex].completed[dayIndex] =
+      !habits[habitIndex].completed[dayIndex];
+
+    saveHabits();
+    renderHabits();
+  }
+
+  function renderHabits() {
+    const list = document.getElementById("habit-list");
+    list.innerHTML = "";
+
+    habits.forEach((habit, index) => {
+      const row = document.createElement("tr");
+
+      const nameCell = document.createElement("td");
+      nameCell.textContent = habit.name;
+      row.appendChild(nameCell);
+
+      days.forEach((day, dayIndex) => {
+        const cell = document.createElement("td");
+        const checkbox = document.createElement("input");
+
+        checkbox.type = "checkbox";
+        checkbox.checked = habit.completed[dayIndex];
+
+        checkbox.addEventListener("change", () => {
+          toggleHabit(index, dayIndex);
+        });
+
+        cell.appendChild(checkbox);
+        row.appendChild(cell);
+      });
+
+      const deleteCell = document.createElement("td");
+      const deleteButton = document.createElement("button");
+
+      deleteButton.textContent = "×";
+      deleteButton.style.color = "#A66F78";
+      deleteButton.style.border = "none";
+      deleteButton.style.background = "transparent";
+      deleteButton.style.cursor = "pointer";
+      deleteButton.style.fontSize = "20px";
+
+      deleteButton.addEventListener("click", () => {
+        deleteHabit(index);
+      });
+
+      deleteCell.appendChild(deleteButton);
+      row.appendChild(deleteCell);
+
+      list.appendChild(row);
+    });
+
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const total = habits.length * 7;
+
+    const completed = habits.reduce((sum, habit) => {
+      return sum + habit.completed.filter(Boolean).length;
+    }, 0);
+
+    const percent = total === 0
+      ? 0
+      : Math.round((completed / total) * 100);
+
+    document.getElementById("progress-text").textContent =
+      percent.toLocaleString("fa-IR") + "٪";
+
+    document.getElementById("progress-fill").style.width =
+      percent + "%";
+  }
+
+  renderHabits();
+</script>
+ 
+</body>
+<style>
+
+/* زیباسازی تیک‌ها */
+.habit-table input[type="checkbox"] {
+  accent-color: #C58D96;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+/* تغییر رنگ دکمه هنگام حرکت موس */
+.habit-input button {
+  transition: 0.3s;
+}
+
+.habit-input button:hover {
+  background-color: #A66F78;
+  transform: translateY(-2px);
+}
+
+/* زیباسازی کادر نوشتن */
+.habit-input input:focus {
+  border-color: #C58D96;
+  box-shadow: 0 0 5px #E8C9CC;
+}
+
+/* مرتب کردن نام عادت‌ها */
+.habit-table td:first-child {
+  text-align: right;
+  font-weight: 500;
+  color: #594B48;
+  min-width: 110px;
+}
+
+/* افکت ردیف‌ها */
+.habit-table tbody tr {
+  transition: 0.2s;
+}
+
+.habit-table tbody tr:hover {
+  background-color: #FFF1EF;
+}
+</style>
+</html>
